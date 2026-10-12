@@ -6,6 +6,16 @@ ENV_VARS = [
     "APP_ENV",
     "APP_PORT",
     "APP_HOST",
+    "PIPELINE_MAX_ROWS",
+    "PG_HOST",
+    "PG_PORT",
+    "PG_DATABASE",
+    "PG_USER",
+    "PG_PASSWORD",
+    "NEO4J_URI",
+    "NEO4J_USER",
+    "NEO4J_PASSWORD",
+    "NEO4J_DATABASE",
 ]
 
 
@@ -22,6 +32,11 @@ def test_defaults_are_applied_when_env_is_empty(clean_env):
     assert envs.APP_ENV == "DEV"
     assert envs.APP_PORT == "8000"
     assert envs.APP_HOST == "0.0.0.0"
+    assert envs.PIPELINE_MAX_ROWS == "100000"
+    assert envs.PG_HOST == ""
+    assert envs.PG_PASSWORD == ""
+    assert envs.NEO4J_URI == ""
+    assert envs.NEO4J_PASSWORD == ""
 
 
 def test_env_values_override_defaults(clean_env, monkeypatch):

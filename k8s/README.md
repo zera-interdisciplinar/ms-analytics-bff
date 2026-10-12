@@ -14,20 +14,25 @@ serviços do workspace.
 | `CronJob ms-analytics-bff` | `python -m app.cron.main` | — (job one-shot) |
 
 Schedule padrão do CronJob: `0 * * * *` (hora cheia, UTC). `concurrencyPolicy: Forbid`.
+O pipeline pandas precisa de mais memória que a API (`512Mi` request / `1Gi` limit).
 
 ## Secrets
 
-Nenhum Secret é referenciado pelos manifests hoje — `APP_ENV` / `APP_PORT` /
-`APP_HOST` vão no YAML. Quando o serviço passar a precisar de credenciais,
-crie `ms-analytics-bff-secrets` em cada namespace e aponte via `secretKeyRef`
-(mesmo padrão de `ms-artificial-intelligence-core-secrets` / `scrapy-secrets`):
+O CronJob precisa das fontes operacionais. Os manifests ainda não
+apontam `secretKeyRef` (o pod sobe sem o Secret). Antes de ligar a
+extração no cluster, crie `ms-analytics-bff-secrets` e referencie:
+
+- `PG_HOST`, `PG_PORT`, `PG_DATABASE`, `PG_USER`, `PG_PASSWORD`
+- `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`, `NEO4J_DATABASE`
 
 ```sh
 kubectl create secret generic ms-analytics-bff-secrets -n qa \
-  --from-literal=EXAMPLE_KEY='<valor-qa>'
+  --from-literal=PG_PASSWORD='<valor-qa>' \
+  --from-literal=NEO4J_PASSWORD='<valor-qa>'
 
 kubectl create secret generic ms-analytics-bff-secrets -n production \
-  --from-literal=EXAMPLE_KEY='<valor-prod>'
+  --from-literal=PG_PASSWORD='<valor-prod>' \
+  --from-literal=NEO4J_PASSWORD='<valor-prod>'
 ```
 
 Sem o Secret referenciado no Deployment, o pod sobe. Com `secretKeyRef`

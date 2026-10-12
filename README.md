@@ -3,6 +3,14 @@
 BFF de analytics do ecossistema Zera. Um único programa Python, dois
 entrypoints: API FastAPI e cronjob.
 
+O cronjob executa o pipeline medallion em memória: Bronze devolve
+DataFrames, a Silver trata esse lote e a Gold calcula os KPIs em cima
+do retorno da Silver. A API ainda só expõe `/health`; persistir o Gold
+para o front fica no próximo passo.
+
+Os notebooks originais em `notebooks/` são a especificação Databricks.
+O código executável está em `app/pipeline/`.
+
 ## Entrypoints
 
 | Entrypoint | Módulo | Como rodar |
