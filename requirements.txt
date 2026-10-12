@@ -1,0 +1,11 @@
+# API
+fastapi
+uvicorn
+httpx
+
+# Utils
+python-dotenv
+
+# Tests
+pytest
+pytest-cov

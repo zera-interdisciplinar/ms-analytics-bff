@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ms-analytics-bff
+  namespace: production
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: ms-analytics-bff-cron
+            image: southamerica-east1-docker.pkg.dev/zera-509513/repo/ms-analytics-bff:IMAGE_TAG
+            imagePullPolicy: Always
+            command: ["python", "-m", "app.cron.main"]
+            resources:
+              requests:
+                memory: "128Mi"
+                cpu: "100m"
+              limits:
+                memory: "256Mi"
+                cpu: "250m"
+            env:
+            - name: APP_ENV
+              value: "production"

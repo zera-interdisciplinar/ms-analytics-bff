@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    container_name: ms-analytics-bff-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=${APP_ENV:-DEV}
+      - APP_PORT=8000
+      - APP_HOST=0.0.0.0
+
+  cron:
+    build: .
+    container_name: ms-analytics-bff-cron
+    command: ["python", "-m", "app.cron.main"]
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=${APP_ENV:-DEV}
+    profiles:
+      - cron
