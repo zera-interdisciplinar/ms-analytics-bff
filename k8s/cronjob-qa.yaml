@@ -21,11 +21,11 @@ spec:
             command: ["python", "-m", "app.cron.main"]
             resources:
               requests:
-                memory: "512Mi"
-                cpu: "250m"
+                memory: "256Mi"
+                cpu: "100m"
               limits:
                 memory: "1Gi"
-                cpu: "1"
+                cpu: "500m"
             env:
             - name: APP_ENV
               value: "QA"

@@ -14,7 +14,7 @@ serviços do workspace.
 | `CronJob ms-analytics-bff` | `python -m app.cron.main` | — (job one-shot) |
 
 Schedule padrão do CronJob: `0 * * * *` (hora cheia, UTC). `concurrencyPolicy: Forbid`.
-O pipeline pandas precisa de mais memória que a API (`512Mi` request / `1Gi` limit).
+O pipeline pandas precisa de mais memória que a API (`256Mi` request / `1Gi` limit; CPU `100m` / `500m`). Requests altos (`250m`/`512Mi`) não agendam neste cluster de 4 nós.
 
 ## Secrets
 
