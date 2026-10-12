@@ -1,0 +1,63 @@
+name: Deploy Production
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+env:
+  REGISTRY: southamerica-east1-docker.pkg.dev
+  IMAGE: southamerica-east1-docker.pkg.dev/zera-509513/repo/ms-analytics-bff
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/366904660850/locations/global/workloadIdentityPools/zera-pool/providers/github-provider
+          service_account: github-actions-deploy@zera-509513.iam.gserviceaccount.com
+
+      - uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: zera-cluster
+          location: southamerica-east1
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGISTRY }} --quiet
+
+      - name: Build and Push Docker Image
+        id: build
+        run: |
+          docker build \
+            --tag ${{ env.IMAGE }}:${{ github.ref_name }} \
+            --tag ${{ env.IMAGE }}:latest \
+            .
+
+          docker push ${{ env.IMAGE }}:${{ github.ref_name }}
+          docker push ${{ env.IMAGE }}:latest
+
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.IMAGE }}:${{ github.ref_name }})
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: Deploy to GKE
+        run: |
+          sed -i "s|IMAGE_TAG|${{ github.ref_name }}|g" k8s/deployment.yaml k8s/cronjob.yaml
+          kubectl apply -f k8s/deployment.yaml -n production
+          kubectl apply -f k8s/service.yaml -n production
+          kubectl apply -f k8s/cronjob.yaml -n production
+          kubectl rollout status deployment/ms-analytics-bff -n production --timeout=120s
+
+      - name: Annotate Deployment
+        run: |
+          kubectl annotate deployment ms-analytics-bff \
+            -n production \
+            kubernetes.io/change-cause="Release ${{ github.ref_name }} — commit ${{ github.sha }}" \
+            --overwrite
