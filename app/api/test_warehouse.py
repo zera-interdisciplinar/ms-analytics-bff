@@ -1,8 +1,10 @@
+import json
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from app.api.conftest import ORG_A, ORG_B, UNIT_A, UNIT_A2, UNIT_B, MANAGER_A, MANAGER_B
+from app.api.serialize import to_wire
 from app.api.warehouse import (
     InMemoryWarehouse,
     PostgresWarehouse,
@@ -73,6 +75,13 @@ def test_save_silver_persists_identity_and_unit_slice(snapshot):
     assert warehouse.identity(MANAGER_A)["unit_id"] == UNIT_A
     assert UNIT_A2 in warehouse.identity(MANAGER_A)["allowed_unit_ids"]
     assert len(identities_from(snapshot)) == 3
+
+
+def test_wire_payload_is_json_with_event_timestamps(snapshot):
+    sliced = {**snapshot, "eventos": snapshot["eventos"].copy()}
+    sliced["eventos"]["data_ocorrencia"] = pd.Timestamp("2026-09-26T20:19:12")
+
+    json.dumps(to_wire(sliced))
 
 
 def test_postgres_warehouse_requires_credentials(monkeypatch):

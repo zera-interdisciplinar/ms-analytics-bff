@@ -160,7 +160,10 @@ def carregar_entidade(entidade, colunas):
 
 def converter_data(df, coluna, entidade):
     origem = df[coluna].copy()
-    datas = pd.to_datetime(origem, errors='coerce', format='mixed')
+    nativas = origem.map(
+        lambda valor: valor.to_native() if hasattr(valor, 'to_native') else valor
+    )
+    datas = pd.to_datetime(nativas, errors='coerce', format='mixed')
     invalidas = int((origem.notna() & datas.isna()).sum())
     nomes_datas = {
         'created_at': 'data_criacao_sql',

@@ -55,4 +55,10 @@ def _records(frame: pd.DataFrame) -> list[dict[str, object]]:
     if frame.empty:
         return []
     serialized = frame.astype(object).where(frame.notna(), None)
-    return serialized.to_dict(orient="records")
+    rows = serialized.to_dict(orient="records")
+    for row in rows:
+        for key, value in row.items():
+            iso = getattr(value, "isoformat", None)
+            if callable(iso) and not isinstance(value, str):
+                row[key] = iso()
+    return rows

@@ -1,4 +1,6 @@
+import pandas as pd
 import pytest
+from neo4j.time import DateTime
 
 from app.pipeline.bronze import run_bronze
 from app.pipeline.silver import run_silver
@@ -29,3 +31,16 @@ def test_silver_integrates_the_bronze_dataframes(fake_postgres, fake_neo4j):
 def test_silver_requires_bronze_snapshot():
     with pytest.raises(ValueError, match="Execute a Bronze primeiro"):
         run_silver(None)
+
+
+def test_silver_parses_neo4j_datetime_on_events(fake_postgres, fake_neo4j):
+    bronze = run_bronze(fake_postgres, fake_neo4j)
+    events = bronze["bases"]["neo_event"].copy()
+    events["occurredAt"] = DateTime(2026, 9, 26, 20, 19, 12, 996834017)
+    bronze["bases"]["neo_event"] = events
+
+    result = run_silver(bronze)
+
+    when = result["eventos"].iloc[0]["data_ocorrencia"]
+    assert pd.notna(when)
+    assert pd.Timestamp(when).year == 2026

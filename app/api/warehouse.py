@@ -201,7 +201,7 @@ class PostgresWarehouse:
                             unit_id,
                             sliced["batch_id"],
                             sliced["extracted_at"],
-                            json.dumps(to_wire(sliced)),
+                            json.dumps(to_wire(sliced), default=str),
                         ),
                     )
             connection.commit()
