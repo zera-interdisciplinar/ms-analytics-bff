@@ -39,7 +39,10 @@ COLUNAS_NEO4J: dict[str, list[str]] = {
     "item": [
         "id", "unitId", "name", "status", "condition", "createdAt", "updatedAt",
         "acquiredAt", "lastEventAt", "manufacturingYear", "usageIntensity",
-        "hasDamages", "damages",
+        "hasDamages", "damages", "createdBy", "createdByName",
+    ],
+    "disposal": [
+        "id", "unitId", "destination", "disposedAt", "cancelled", "createdAt",
     ],
     "material": ["id", "name", "code", "recyclable", "hazardous"],
     "model": [
@@ -56,6 +59,8 @@ NOMES_PORTUGUES: dict[str, str] = {
     "category_name": "categoria",
     "city": "cidade",
     "condition": "condicao",
+    "createdBy": "id_responsavel",
+    "createdByName": "responsavel",
     "createdAt": "data_cadastro",
     "damages": "danos",
     "estimatedWeightKg": "peso_estimado_kg",
@@ -222,10 +227,11 @@ def run_silver(bronze_snapshot: BronzeSnapshot | None) -> SilverSnapshot:
         "manufacturingYear", "usageIntensity", "estimatedWeightKg",
         "expectedLifespanMonths", "warrantyMonths", "stockCapacity",
     ]
-    colunas_booleanas = ["hasDamages", "recyclable", "hazardous"]
+    colunas_booleanas = ["hasDamages", "recyclable", "hazardous", "cancelled"]
     colunas_datas_neo4j = {
         "item": ["createdAt", "updatedAt", "acquiredAt", "lastEventAt"],
         "event": ["occurredAt"],
+        "disposal": ["disposedAt", "createdAt"],
     }
     for entidade, colunas in COLUNAS_NEO4J.items():
         df = bases["neo_" + entidade]

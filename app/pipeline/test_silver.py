@@ -20,6 +20,8 @@ def test_silver_integrates_the_bronze_dataframes(fake_postgres, fake_neo4j):
     assert itens.iloc[0]["modelo"] == "ZBook"
     assert itens.iloc[0]["categoria"] == "Informática"
     assert itens.iloc[0]["unidade"] == "Unidade Centro"
+    assert "id_responsavel" in itens.columns
+    assert "neo_disposal" in result["bases"]
     assert bool(itens.iloc[0]["possui_material_reciclavel"]) is True
     assert eventos.iloc[0]["id_item"] == "item-1"
 

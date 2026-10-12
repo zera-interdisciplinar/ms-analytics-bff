@@ -9,6 +9,10 @@ numpy
 pg8000
 neo4j>=5,<6
 
+# Auth
+PyJWT
+cryptography
+
 # Utils
 python-dotenv
 

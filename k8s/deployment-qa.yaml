@@ -53,3 +53,5 @@ spec:
           value: "8000"
         - name: APP_HOST
           value: "0.0.0.0"
+        - name: JWT_ISSUER
+          value: "ms-administrative-core"

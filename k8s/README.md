@@ -24,6 +24,11 @@ extração no cluster, crie `ms-analytics-bff-secrets` e referencie:
 
 - `PG_HOST`, `PG_PORT`, `PG_DATABASE`, `PG_USER`, `PG_PASSWORD`
 - `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`, `NEO4J_DATABASE`
+- `JWT_PUBLIC_KEY` ou `JWT_JWKS_URL` (API)
+
+O CronJob precisa de escrita no Postgres (schema `analytics`). A extração
+Bronze continua read-only nas tabelas `public`; a persistência do lote
+é só em `analytics.*`.
 
 ```sh
 kubectl create secret generic ms-analytics-bff-secrets -n qa \

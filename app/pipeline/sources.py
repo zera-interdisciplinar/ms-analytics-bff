@@ -140,7 +140,7 @@ class Neo4jSource:
                 for registro in tx.run(
                     """
                     MATCH (a)-[r]->(b)
-                    WHERE type(r) IN ['IS_MODEL','BELONGS_TO','MADE_OF','HAS_EVENT']
+                    WHERE type(r) IN ['IS_MODEL','BELONGS_TO','MADE_OF','HAS_EVENT','INCLUDES']
                     RETURN elementId(r) AS id, a.id AS source_id, b.id AS target_id,
                            type(r) AS relationship_type, labels(a) AS source_labels,
                            labels(b) AS target_labels, properties(r) AS properties

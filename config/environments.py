@@ -22,6 +22,12 @@ class Environments:
     APP_PORT: str
     APP_HOST: str
     PIPELINE_MAX_ROWS: str
+    JWT_ISSUER: str
+    JWT_JWKS_URL: str
+    JWT_PUBLIC_KEY: str
+    SSE_POLL_SECONDS: str
+    SSE_HEARTBEAT_SECONDS: str
+    CORS_ORIGINS: str
     PG_HOST: str
     PG_PORT: str
     PG_DATABASE: str
@@ -39,6 +45,12 @@ class Environments:
         self.APP_PORT = os.getenv("APP_PORT", "8000")
         self.APP_HOST = os.getenv("APP_HOST", "0.0.0.0")
         self.PIPELINE_MAX_ROWS = os.getenv("PIPELINE_MAX_ROWS", "100000")
+        self.JWT_ISSUER = os.getenv("JWT_ISSUER", "ms-administrative-core")
+        self.JWT_JWKS_URL = os.getenv("JWT_JWKS_URL", "")
+        self.JWT_PUBLIC_KEY = os.getenv("JWT_PUBLIC_KEY", "")
+        self.SSE_POLL_SECONDS = os.getenv("SSE_POLL_SECONDS", "2")
+        self.SSE_HEARTBEAT_SECONDS = os.getenv("SSE_HEARTBEAT_SECONDS", "15")
+        self.CORS_ORIGINS = os.getenv("CORS_ORIGINS", "")
         self.PG_HOST = os.getenv("PG_HOST", "")
         self.PG_PORT = os.getenv("PG_PORT", "15432")
         self.PG_DATABASE = os.getenv("PG_DATABASE", "admin_core")

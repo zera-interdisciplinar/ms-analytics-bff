@@ -7,6 +7,12 @@ ENV_VARS = [
     "APP_PORT",
     "APP_HOST",
     "PIPELINE_MAX_ROWS",
+    "JWT_ISSUER",
+    "JWT_JWKS_URL",
+    "JWT_PUBLIC_KEY",
+    "SSE_POLL_SECONDS",
+    "SSE_HEARTBEAT_SECONDS",
+    "CORS_ORIGINS",
     "PG_HOST",
     "PG_PORT",
     "PG_DATABASE",
@@ -33,6 +39,8 @@ def test_defaults_are_applied_when_env_is_empty(clean_env):
     assert envs.APP_PORT == "8000"
     assert envs.APP_HOST == "0.0.0.0"
     assert envs.PIPELINE_MAX_ROWS == "100000"
+    assert envs.JWT_ISSUER == "ms-administrative-core"
+    assert envs.JWT_PUBLIC_KEY == ""
     assert envs.PG_HOST == ""
     assert envs.PG_PASSWORD == ""
     assert envs.NEO4J_URI == ""
