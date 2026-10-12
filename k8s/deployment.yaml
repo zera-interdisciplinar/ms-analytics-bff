@@ -54,4 +54,45 @@ spec:
         - name: APP_HOST
           value: "0.0.0.0"
         - name: JWT_ISSUER
-          value: "ms-administrative-core"
+          value: "ms-administrative-core-prod"
+        - name: JWT_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ms-administrative-core-jwt
+              key: public.pem
+        - name: PG_HOST
+          value: "postgres"
+        - name: PG_PORT
+          value: "5432"
+        - name: PG_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_DB
+        - name: PG_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_USER
+        - name: PG_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_PASSWORD
+        - name: NEO4J_URI
+          value: "bolt://neo4j:7687"
+        - name: NEO4J_USER
+          valueFrom:
+            secretKeyRef:
+              name: neo4j-secrets
+              key: NEO4J_USER
+        - name: NEO4J_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: neo4j-secrets
+              key: NEO4J_PASSWORD
+        - name: NEO4J_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: neo4j-secrets
+              key: NEO4J_DB

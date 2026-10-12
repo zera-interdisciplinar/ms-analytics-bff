@@ -18,34 +18,27 @@ O pipeline pandas precisa de mais memória que a API (`512Mi` request / `1Gi` li
 
 ## Secrets
 
-O CronJob precisa das fontes operacionais. Os manifests ainda não
-apontam `secretKeyRef` (o pod sobe sem o Secret). Antes de ligar a
-extração no cluster, crie `ms-analytics-bff-secrets` e referencie:
+Os manifests reutilizam os Secrets já existentes no namespace, no mesmo
+padrão do `ms-administrative-core` e do `ms-inventory`. Não há um Secret
+próprio `ms-analytics-bff-secrets`.
 
-- `PG_HOST`, `PG_PORT`, `PG_DATABASE`, `PG_USER`, `PG_PASSWORD`
-- `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`, `NEO4J_DATABASE`
-- `JWT_PUBLIC_KEY` ou `JWT_JWKS_URL` (API)
+| Env | Origem |
+|---|---|
+| `PG_HOST` / `PG_PORT` | `postgres:5432` (ClusterIP) |
+| `PG_DATABASE` / `PG_USER` / `PG_PASSWORD` | `postgres-secrets` |
+| `NEO4J_URI` | `bolt://neo4j:7687` |
+| `NEO4J_USER` / `NEO4J_PASSWORD` / `NEO4J_DATABASE` | `neo4j-secrets` |
+| `JWT_PUBLIC_KEY` | `ms-administrative-core-jwt` / `public.pem` |
+| `JWT_ISSUER` | `ms-administrative-core-qa` (QA) / `ms-administrative-core-prod` (prod) |
 
 O CronJob precisa de escrita no Postgres (schema `analytics`). A extração
 Bronze continua read-only nas tabelas `public`; a persistência do lote
-é só em `analytics.*`.
-
-```sh
-kubectl create secret generic ms-analytics-bff-secrets -n qa \
-  --from-literal=PG_PASSWORD='<valor-qa>' \
-  --from-literal=NEO4J_PASSWORD='<valor-qa>'
-
-kubectl create secret generic ms-analytics-bff-secrets -n production \
-  --from-literal=PG_PASSWORD='<valor-prod>' \
-  --from-literal=NEO4J_PASSWORD='<valor-prod>'
-```
-
-Sem o Secret referenciado no Deployment, o pod sobe. Com `secretKeyRef`
-obrigatório e o Secret ausente, o pod trava em `CreateContainerConfigError`.
+é só em `analytics.*`. Com `secretKeyRef` obrigatório e o Secret ausente,
+o pod trava em `CreateContainerConfigError`.
 
 ## Ordem de deploy
 
-1. Secrets (quando existirem).
+1. Secrets compartilhados (`postgres-secrets`, `neo4j-secrets`, `ms-administrative-core-jwt`) já existentes no namespace.
 2. `deployment-qa.yaml` + `service-qa.yaml` + `cronjob-qa.yaml` (qa) /
    `deployment.yaml` + `service.yaml` + `cronjob.yaml` (production).
    O workflow aplica os três.
