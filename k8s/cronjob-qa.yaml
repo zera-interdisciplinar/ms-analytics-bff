@@ -16,7 +16,7 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: ms-analytics-bff-cron
-            image: southamerica-east1-docker.pkg.dev/zera-509513/repo/ms-analytics-bff:IMAGE_TAG
+            image: southamerica-east1-docker.pkg.dev/zera-512810/repo/ms-analytics-bff:IMAGE_TAG
             imagePullPolicy: Always
             command: ["python", "-m", "app.cron.main"]
             resources:

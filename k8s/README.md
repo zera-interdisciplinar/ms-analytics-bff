@@ -56,9 +56,9 @@ Espelha os outros serviços Python do org (`ms-artificial-intelligence-core`):
 | `.github/workflows/deploy-prod.yaml` | tag `v*.*.*` | build `:<tag>` + `:latest`, apply no namespace `production` |
 
 Auth GCP: Workload Identity Federation (`zera-pool` / `github-provider`),
-SA `github-actions-deploy@zera-509513.iam.gserviceaccount.com`, cluster
+SA `github-actions-deploy@zera-512810.iam.gserviceaccount.com`, cluster
 `zera-cluster` em `southamerica-east1`, registry
-`southamerica-east1-docker.pkg.dev/zera-509513/repo/ms-analytics-bff`.
+`southamerica-east1-docker.pkg.dev/zera-512810/repo/ms-analytics-bff`.
 
 Antes do primeiro deploy:
 
