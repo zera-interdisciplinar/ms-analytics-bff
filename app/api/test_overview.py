@@ -125,3 +125,15 @@ def test_recycling_falls_back_to_disposed_item_weight(snapshot):
     payload = build_overview(snapshot, tenant, _filters())
 
     assert payload["kpis"]["impacto_recuperado"]["kg"] == 2.0
+
+
+def test_recycling_falls_back_when_includes_have_no_weight(snapshot):
+    snapshot["includes"] = snapshot["includes"].assign(properties=[{}, {}])
+    snapshot["itens"].loc[snapshot["itens"]["id_item"].eq("item-a1"), "situacao"] = "DISPOSED"
+    tenant = resolve_tenant(snapshot, _token(MANAGER_A))
+
+    payload = build_overview(snapshot, tenant, _filters())
+
+    assert payload["kpis"]["taxa_reciclagem"]["percent"] == 100.0
+    assert payload["kpis"]["impacto_recuperado"]["kg"] == 2.0
+    assert payload["circularidade"]["percent"] == 100.0

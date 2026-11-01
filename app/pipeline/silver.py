@@ -54,7 +54,9 @@ COLUNAS_NEO4J: dict[str, list[str]] = {
         "id", "unitId", "name", "manufacturer", "estimatedWeightKg",
         "expectedLifespanMonths", "warrantyMonths", "approvalStatus",
     ],
-    "relationships": ["id", "source_id", "target_id", "relationship_type"],
+    "relationships": [
+        "id", "source_id", "target_id", "relationship_type", "properties",
+    ],
     "unitinventorysettings": ["unitId", "stockCapacity"],
 }
 
