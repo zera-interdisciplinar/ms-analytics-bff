@@ -1,0 +1,21 @@
+# API
+fastapi
+uvicorn
+httpx
+
+# Pipeline
+pandas>=2.2
+numpy
+pg8000
+neo4j>=5,<6
+
+# Auth
+PyJWT
+cryptography
+
+# Utils
+python-dotenv
+
+# Tests
+pytest
+pytest-cov
