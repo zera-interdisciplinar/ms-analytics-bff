@@ -12,6 +12,11 @@ from logger.logger import Logger
 
 myLogger = Logger()
 
+CHAVES_JOIN = (
+    "id", "unitId", "unit_id", "organization_id", "itemId",
+    "source_id", "target_id",
+)
+
 COLUNAS_POSTGRES: dict[str, list[str]] = {
     "address": [
         "id", "city", "state", "unit_id", "recycling_business_id",
@@ -217,6 +222,8 @@ def run_silver(bronze_snapshot: BronzeSnapshot | None) -> SilverSnapshot:
                 df[coluna] = df[coluna].map(
                     lambda valor: valor.strip() if isinstance(valor, str) else valor
                 )
+            if coluna in CHAVES_JOIN:
+                df[coluna] = df[coluna].astype("string")
 
     for entidade, colunas in COLUNAS_POSTGRES.items():
         df = bases["pg_" + entidade]
@@ -433,7 +440,11 @@ def run_silver(bronze_snapshot: BronzeSnapshot | None) -> SilverSnapshot:
         verificacoes, columns=["entidade", "verificacao", "ocorrencias"],
     )
     qualidade["id_lote"] = batch_id
-    myLogger.Info(f"Silver finished {len(itens)} itens")
+    myLogger.Info(
+        f"Silver finished {len(itens)} itens "
+        f"unidade_encontrada=false={int((~itens['unidade_encontrada']).sum())} "
+        f"id_organizacao_nulo={int(itens['id_organizacao'].isna().sum())}"
+    )
     return {
         "batch_id": batch_id,
         "extracted_at": extracted_at,
