@@ -343,6 +343,11 @@ def _disposed_weights(
         return _fallback_disposed_weights(itens)
     weights = _include_weight(linked)
     total = float(weights.sum())
+    if total <= 0:
+        disposed = itens.iloc[0:0]
+        if not itens.empty and "situacao" in itens.columns:
+            disposed = itens.loc[itens["situacao"].astype("string").eq("DISPOSED")]
+        return _fallback_disposed_weights(disposed)
     if "destination" in linked.columns:
         recycled = float(weights.loc[linked["destination"].astype("string").str.upper().eq(RECYCLING)].sum())
     else:

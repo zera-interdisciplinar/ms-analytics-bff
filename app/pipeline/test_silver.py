@@ -4,7 +4,7 @@ from copy import deepcopy
 import pytest
 
 from app.pipeline.bronze import run_bronze
-from app.pipeline.conftest import FakeNeo4j, FakePostgres, neo_nodes, postgres_tables
+from app.pipeline.conftest import FakeNeo4j, FakePostgres, neo_edges, neo_nodes, postgres_tables
 from app.pipeline.silver import run_silver
 
 
@@ -54,6 +54,25 @@ def test_silver_joins_postgres_uuid_keys_to_neo4j_strings():
     assert bool(item["unidade_encontrada"]) is True
     assert item["id_organizacao"] == str(org)
     assert item["unidade"] == "Unidade Centro"
+
+
+def test_silver_keeps_includes_weight_on_relationships():
+    edges = neo_edges()
+    edges.append({
+        "id": "rel-inc",
+        "source_id": "disp-1",
+        "target_id": "item-1",
+        "relationship_type": "INCLUDES",
+        "source_labels": ["Disposal"],
+        "target_labels": ["Item"],
+        "properties": {"weightKg": 2.5},
+    })
+
+    result = run_silver(run_bronze(FakePostgres(), FakeNeo4j(edges=edges)))
+    includes = result["bases"]["neo_relationships"]
+    includes = includes.loc[includes["relationship_type"].eq("INCLUDES")]
+
+    assert includes.iloc[0]["properties"]["weightKg"] == 2.5
 
 
 def test_silver_requires_bronze_snapshot():
